@@ -2,13 +2,14 @@ const fetch = require('node-fetch');
 const EventEmitter = require('events');
 const Intents = require('./constructors/Intents');
 const ws = require('ws');
-const os = require('os');
+const { platform } = require('os');
 const pako = require('pako');
 const handle = require('./handlers/Event');
-const baseURL = 'https://discord.com/api';
+const { baseURL } = require('./utils/Constants');
 
 /**
  * @typedef {Object} ClientOptions
+ * @property {string} token The bot's token.
  * @property {number} ClientOptions.shardCount
  * @property {number|Array} ClientOptions.shards
  * @property {number|bigint|Intents.FLAGS|Intents.FLAGS[]} ClientOptions.intents
@@ -30,15 +31,15 @@ class Client extends EventEmitter {
   constructor(options) {
     super(options);
 
+	this.token = (options.token && typeof options.token === 'string') ? options.token : null;
     if (this.options.shardCount === 1 && Array.isArray(this.options.shards)) this.options.shardCount = this.options.shards.length;
 
-    if (this.options.shards === undefined && Number.isInteger(this.options.shardCount)) this.options.shards = Array.from({ length: this.options.shardCount }, (_, i) => i);
+    if (!this.options.shards && Number.isInteger(this.options.shardCount)) this.options.shards = Array.from({ length: this.options.shardCount }, (_, i) => i);
 
     if (Number.isInteger(this.options.shards)) this.options.shards = [this.options.shards];
+    else if (Array.isArray(this.options.shards)) this.options.shards = [...new Set(this.options.shards.filter(shard => !isNaN(shard) && shard >= 0 && shard < Infinity && shard === (shard | 0)))];
 
-    if (Array.isArray(this.options.shards)) this.options.shards = [...new Set(this.options.shards.filter(shard => !isNaN(shard) && shard >= 0 && shard < Infinity && shard === (shard | 0)))];
-
-    if (this.options.intents === undefined) throw new TypeError('Missing intents');
+    if (!this.options.intents) throw new TypeError('Missing intents');
     else this.options.intents = Intents.resolve(this.options.intents);
 
     if (!Number.isInteger(this.options.shardCount) || isNaN(this.options.shardCount) || this.options.shardCount < 1) throw new TypeError("[INVALID CLIENT OPTION] 'shardCount' must be a number greater or equal to 1");
@@ -76,8 +77,8 @@ class Client extends EventEmitter {
   }
 
   evaluate(data, flag) {
-    if (typeof flag !== 'object' || flag === null) flag = {};
-    if (flag.binary === undefined || flag.binary === null) return JSON.parse(data);
+    if (!flag || typeof flag !== 'object') flag = {};
+    if (!flag.binary) return JSON.parse(data);
     const inflator = new pako.Inflate();
     inflator.push(data);
     if (inflator.err) throw new Error('An error occurred while decompressing data');
@@ -86,9 +87,14 @@ class Client extends EventEmitter {
 
   /**
    * Attempts to connect to the Discord gateway
+   * @param {string?} token A bot's token, if it's not provided beforehand.
    * @returns {void}
    */
-  connect() {
+  connect(token) {
+	
+	if (token && typeof token === 'string' && !this.token) this.token = token;
+	if (!this.token) throw new TypeError('Token not provided.');
+	
     this.emit('debug', 'Attemping to login to the Discord gateway...');
     this.socket = new ws('wss://gateway.discord.gg/?v=8&encoding=json');
     this.socket.once('open', () => {
@@ -99,7 +105,7 @@ class Client extends EventEmitter {
           token: this.token,
           intents: this.options.intents,
           properties: {
-            $os: os.platform,
+            $os: platform(),
             $browser: 'discord.urmom',
             $device: 'discord.urmom'
           },
