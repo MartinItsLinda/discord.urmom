@@ -33,29 +33,21 @@ class Client extends EventEmitter {
 
     this.token = (options.token && typeof options.token === 'string') ? options.token : null;
     if (this.options.shardCount === 1 && Array.isArray(this.options.shards)) this.options.shardCount = this.options.shards.length;
-
     if (!this.options.shards && Number.isInteger(this.options.shardCount)) this.options.shards = Array.from({ length: this.options.shardCount }, (_, i) => i);
-
-    if (Number.isInteger(this.options.shards)) this.options.shards = [this.options.shards];
+    
+	if (Number.isInteger(this.options.shards)) this.options.shards = [this.options.shards];
     else if (Array.isArray(this.options.shards)) this.options.shards = [...new Set(this.options.shards.filter(shard => !isNaN(shard) && shard >= 0 && shard < Infinity && shard === (shard | 0)))];
-
-    if (!this.options.intents) throw new TypeError('Missing intents');
+    
+	if (!this.options.intents) throw new TypeError('Missing intents');
     else this.options.intents = Intents.resolve(this.options.intents);
-
-    if (!Number.isInteger(this.options.shardCount) || isNaN(this.options.shardCount) || this.options.shardCount < 1) throw new TypeError("[INVALID CLIENT OPTION] 'shardCount' must be a number greater or equal to 1");
-
+    
+	if (!Number.isInteger(this.options.shardCount) || isNaN(this.options.shardCount) || this.options.shardCount < 1) throw new TypeError("[INVALID CLIENT OPTION] 'shardCount' must be a number greater or equal to 1");
     if (this.options.shards && !(this.options.shards === 'auto' || Array.isArray(this.options.shards))) throw new TypeError("[INVALID CLIENT OPTIONS] 'shards' must be 'auto', number or an array of numbers");
-
     if (!this.options.shards?.length) throw new TypeError('[INVALID SHARDS PROVIDED]');
-
     if (!Array.isArray(this.options.partials)) throw new TypeError("[INVALID CLIENT OPTION] 'partials' must be an array");
-
     if (!Number.isInteger(this.options.restWsBridgeTimeout) || isNaN(this.options.restWsBridgeTimeout)) throw new TypeError("[INVALID CLIENT OPTION] 'restWsBridgeTimeout' must be a number");
-
     if (!Number.isInteger(this.options.restRequestTimeout) || isNaN(this.options.restRequestTimeout)) throw new TypeError("[INVALID CLIENT OPTION] 'restRequestTimeout' must be a number");
-
     if (!Number.isInteger(this.options.restSweepInterval) || isNaN(this.options.restSweepInterval)) throw new TypeError("[INVALID CLIENT OPTION] 'restSweepInterval' must be a number");
-
     if (!Number.isInteger(this.options.retryLimit) || isNaN(this.options.retryLimit)) throw new TypeError("[INVALID CLIENT OPTION] 'retryLimit' must be a number");
   }
 
@@ -95,10 +87,10 @@ class Client extends EventEmitter {
     if (token && typeof token === 'string' && !this.token) this.token = token;
     if (!this.token) throw new TypeError('Token not provided.');
     
-    this.emit('debug', 'Attemping to login to the Discord gateway...');
+    this.emit('debug', 'Attempting to login to the Discord gateway...');
     this.socket = new ws('wss://gateway.discord.gg/?v=8&encoding=json');
     this.socket.once('open', () => {
-      this.emit('debug', 'Attemping to login...');
+      this.emit('debug', 'Attempting to login...');
       this.socket.send(JSON.stringify({
         op: 2,
         d: {

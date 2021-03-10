@@ -14,8 +14,8 @@ class User extends Base {
     }
     
     /**
-     * @param {object?} Optional options for changing the avatar URL.
-     * @returns {string} the avatar URL given.
+     * @param {object?} options Optional options for changing the avatar URL.
+     * @returns {string} the avatar URL for the user.
      */
     avatarURL(options) {
         if (!options) return `https://cdn.discordapp.com/avatars/${this.id}/${this.avatar}${this.avatar.startsWith('a_') ? '.gif' : '.png'}`;
