@@ -15,10 +15,10 @@ class User extends Base {
     
     /**
      * @param {object?} options Optional options for changing the avatar URL.
-     * @returns {string} the avatar URL for the user or null if the user only uses the default discord avatar.
+     * @returns {string} the avatar URL for the user.
      */
     avatarURL(options) {
-		if (!this.avatar) return `https://cdn.discordapp.com/embed/avatars/${Number(this.discriminator) % 5}.png`;
+        if (!this.avatar) return `https://cdn.discordapp.com/embed/avatars/${Number(this.discriminator) % 5}.png`;
         else if (!options) return `https://cdn.discordapp.com/avatars/${this.id}/${this.avatar}${this.avatar.startsWith('a_') ? '.gif' : '.png'}`;
         
         let format = (options.format || (this.avatar.startsWith('a_') ? 'gif' : 'png')).toLowerCase();
