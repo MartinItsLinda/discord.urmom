@@ -31,7 +31,7 @@ class Client extends EventEmitter {
   constructor(options) {
     super(options);
 
-	this.token = (options.token && typeof options.token === 'string') ? options.token : null;
+    this.token = (options.token && typeof options.token === 'string') ? options.token : null;
     if (this.options.shardCount === 1 && Array.isArray(this.options.shards)) this.options.shardCount = this.options.shards.length;
 
     if (!this.options.shards && Number.isInteger(this.options.shardCount)) this.options.shards = Array.from({ length: this.options.shardCount }, (_, i) => i);
@@ -91,10 +91,10 @@ class Client extends EventEmitter {
    * @returns {void}
    */
   connect(token) {
-	
-	if (token && typeof token === 'string' && !this.token) this.token = token;
-	if (!this.token) throw new TypeError('Token not provided.');
-	
+    
+    if (token && typeof token === 'string' && !this.token) this.token = token;
+    if (!this.token) throw new TypeError('Token not provided.');
+    
     this.emit('debug', 'Attemping to login to the Discord gateway...');
     this.socket = new ws('wss://gateway.discord.gg/?v=8&encoding=json');
     this.socket.once('open', () => {
@@ -105,7 +105,7 @@ class Client extends EventEmitter {
           token: this.token,
           intents: this.options.intents,
           properties: {
-            $os: platform(),
+            $os: platform,
             $browser: 'discord.urmom',
             $device: 'discord.urmom'
           },
