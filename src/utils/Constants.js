@@ -15,8 +15,14 @@ module.exports = {
         restart: 5000, //In MS, restart after 5 seconds of execution.
     },
     defaultCommandOptions: {
-        findtype: '',
+        findOptions: {
+            findtype: '',
         multiple: false,
         hasPerms: null,
+        },
+        clearOptions: {
+            clearAll: true,
+            clearByPermissions: false,
+        }
     }
 }

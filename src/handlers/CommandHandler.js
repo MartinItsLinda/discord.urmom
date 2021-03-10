@@ -32,7 +32,7 @@ class CommandHandler extends EventEmitter {
      */
     find(search, options) {
         let data;
-        if (!options) options = defaultCommandOptions;
+        if (!options) options = defaultCommandOptions.findOptions;
         if (options.findtype === 'alias') data = this.aliases.get(search);
         if (options.findtype === 'command') data = this.commands.get(search);
         if (options.findtype === 'category') data = this.categories.get(search);
@@ -44,5 +44,13 @@ class CommandHandler extends EventEmitter {
         if(options.hasPerms) data = {
             //Filter through map of aliases + commands
         }
+    }
+    /**
+     * @param {array?} options 
+     * @returns {void}
+     */
+    clear(options) {
+        if(!options) options = defaultCommandOptions.clearOptions;
+        
     }
 }
