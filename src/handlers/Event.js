@@ -1,16 +1,22 @@
+const Message = require('../constructors/Message');
 const User = require('../constructors/User');
 
 function handle(message, flag, client) {
   const msg = client.evaluate(message, flag);
   client._sequenceNumber = 1;
-  client.emit('raw', msg.d);
+  client.emit('raw', msg.d, msg.t);
   switch (msg.t) {
     case 'READY': {
       client.emit('debug', 'Connected to the Discord gateway');
       if (!msg.d.user.bot) process.exit();
-      client.user = new User(msg.d.user);
+      client.user = new User(client, msg.d.user);
       client._sessionId = msg.d.session_id;
       return client.emit('ready', client.user);
+    }
+    case 'MESSAGE_CREATE': {
+      console.log(msg.d)
+      const MessageObject = new Message(client, msg.d)
+      client.emit('message', MessageObject)
     }
   }
 
@@ -34,7 +40,7 @@ function handle(message, flag, client) {
         }));
         return client.emit('debug', `[Heartbeat] ${msg.d.heartbeat_interval}ms`);
       }, msg.d.heartbeat_interval);
-      return client.emit('debug', `Starting heartbeat at ${msg.d.heartbeat.interval}ms`);
+      return client.emit('debug', `Starting heartbeat at ${msg.d.heartbeat_interval}ms`);
     }
   }
 }
