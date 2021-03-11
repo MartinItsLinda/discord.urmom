@@ -1,4 +1,3 @@
-
 const c = require(`./Client`);
 const client = new c({
     token: 'ODE5MzI0NDUwNDAyODYxMTM2.YEk9Ww.B_fgeqUnTQVeKTq0OcHl2d0_064',
