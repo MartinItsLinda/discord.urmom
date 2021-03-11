@@ -15,3 +15,4 @@ class Role extends Base {
         this.mentionable = data.mentionable;
     }
 }
+module.exports = Role;

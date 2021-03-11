@@ -16,8 +16,7 @@ class Message extends Base {
         this.type = data.type;
         this.author = new User(client, data.author);
         
-        this.channel = { id: Number(data.channel_id) };
-        this.guild = new Guild(client, data.guild);
+        this.channel = { id: data.channel_id };
         
         this.createdTimestamp = new Date(data.timestamp);
         this.editedTimestamp = data.edited_timestamp ? new Date(data.edited_timestamp) : null;

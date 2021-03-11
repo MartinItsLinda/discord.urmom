@@ -1,7 +1,9 @@
+const Guild = require('../constructors/Guild');
 const Message = require('../constructors/Message');
 const User = require('../constructors/User');
+const APIrequest = require('../websocket/APIRequest');
 
-function handle(message, flag, client) {
+async function handle(message, flag, client) {
   const msg = client.evaluate(message, flag);
   client._sequenceNumber = 1;
   client.emit('raw', msg.d, msg.t);
@@ -11,10 +13,17 @@ function handle(message, flag, client) {
       if (!msg.d.user.bot) process.exit();
       client.user = new User(client, msg.d.user);
       client._sessionId = msg.d.session_id;
+      client.guilds = new Map();
+      msg.d.guilds.forEach(g => {
+        const API = new APIrequest();
+        API.getguild(client, g.id).then(gg => {
+          const guild = new Guild(client, gg);
+          client.guilds.set(guild.id, guild)
+        })
+      });
       return client.emit('ready', client.user);
     }
     case 'MESSAGE_CREATE': {
-      console.log(msg.d)
       const MessageObject = new Message(client, msg.d)
       client.emit('message', MessageObject)
     }

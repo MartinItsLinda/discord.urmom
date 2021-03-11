@@ -6,7 +6,6 @@ const Role = require("./Role");
 class Guild extends Base {
     constructor(client, data) {
         super();
-        
         this.client = client;
         this.id = data.id;
         this.name = data.name;
@@ -30,8 +29,8 @@ class Guild extends Base {
         this.afkTimeout = data.afk_timeout;
         this.features = data.features;
         
-        this.emojis = data.emojis.map(raw => new Emoji(client, raw));
-        this.roles = data.roles.map(raw => new Role(client, raw));
+        this.emojis = data.emojis?.map(raw => new Emoji(client, raw));
+        this.roles = data.roles?.map(raw => new Role(client, raw));
     }
     
     iconURL(options) {
