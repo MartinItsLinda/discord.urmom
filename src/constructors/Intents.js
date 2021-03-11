@@ -1,6 +1,6 @@
 const BitField = require('./BitField');
 
-class Intents extends Bitfield {}
+class Intents extends BitField {}
 
 Intents.FLAGS = {
   GUILDS: 1 << 0,
