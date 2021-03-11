@@ -1,32 +1,27 @@
 const Base = require("./Base");
+const User = require("./User");
 const Guild = require("./Guild");
 
 class Message extends Base {
-    constructor(client, data, channel) {
+    constructor(client, data) {
         super();
-        /**
-         * If the message is ACTIVE (not deleted) or not.
-         * @type {boolean}
-         */
         this.client = client;
-
-        this.active = true;
-
-        this.id = data.id;
+        
+        this.id = Number(data.id);
         this.content = data.content;
-        this.createdAt = data.timestamp;
-
+        this.tts = data.tts;
+        this.mentionEveryone = data.mention_everyone;
+        this.roleMentions = data.mention_roles.map(Number);
         this.pinned = data.pinned;
-        this.author = {
-            username: data.author.username,
-            id: data.author.id,
-            discriminator: data.author.discriminator,
-        }
-        this.channel = {
-            id: data.channel_id
-        }
-        this.attachments = data.attachments;
-
+        this.type = data.type;
+        this.author = new User(client, data.author);
+        
+        this.channel = { id: Number(data.channel_id) };
+        this.guild = new Guild(client, data.guild);
+        
+        this.createdTimestamp = new Date(data.timestamp);
+        this.editedTimestamp = data.edited_timestamp ? new Date(data.edited_timestamp) : null;
     }
 }
+
 module.exports = Message;
