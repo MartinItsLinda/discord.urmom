@@ -30,7 +30,7 @@ class Client extends EventEmitter {
    */
   constructor(options) {
     super(options);
-
+    this.options = options;
     this.token = (options.token && typeof options.token === 'string') ? options.token : null;
     if (this.options.shardCount === 1 && Array.isArray(this.options.shards)) this.options.shardCount = this.options.shards.length;
     if (!this.options.shards && Number.isInteger(this.options.shardCount)) this.options.shards = Array.from({ length: this.options.shardCount }, (_, i) => i);
@@ -83,7 +83,6 @@ class Client extends EventEmitter {
    * @returns {void}
    */
   connect(token) {
-    
     if (token && typeof token === 'string' && !this.token) this.token = token;
     if (!this.token) throw new TypeError('Token not provided.');
     
