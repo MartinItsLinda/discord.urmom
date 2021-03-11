@@ -30,7 +30,7 @@ class Client extends EventEmitter {
    */
   constructor(options) {
     super(options);
-
+    this.options = options;
     if (typeof options.token === 'string') this.token = options.token;
     if (this.options.shardCount === 1 && Array.isArray(this.options.shards)) this.options.shardCount = this.options.shards.length;
     if (this.options.shards === undefined && Number.isInteger(this.options.shardCount)) this.options.shards = Array.from({ length: this.options.shardCount }, (_, i) => i);

@@ -13,14 +13,20 @@ class Message extends Base {
         this.active = true;
 
         this.id = data.id;
-
+        this.content = data.content;
         this.createdAt = data.timestamp;
 
         this.pinned = data.pinned;
-
+        this.author = {
+            username: data.author.username,
+            id: data.author.id,
+            discriminator: data.author.discriminator,
+        }
+        this.channel = {
+            id: data.channel_id
+        }
         this.attachments = data.attachments;
 
-        this.guild = new Guild(client, data.guild)
     }
 }
 module.exports = Message;
