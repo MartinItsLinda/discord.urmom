@@ -1,7 +1,8 @@
 const c = require(`./Client`);
-const fetch = require(`node-fetch`)
+const fetch = require(`node-fetch`);
+const config = require(`./config.json`);
 const client = new c({
-    token: 'ODE5MzI0NDUwNDAyODYxMTM2.YEk9Ww.6BGHZiRBex-ttPIcwe1YpmpoNkM',
+    token: config.token,
     intents: ['GUILD_MESSAGES'],
     shardCount: 1,
     partials: [''],
@@ -17,9 +18,9 @@ const client = new c({
     }
 });
 client.on('ready', () => {
-})
-client.on('debug', console.log)
-client.on('error', console.log)
+});
+client.on('debug', console.log);
+client.on('error', console.log);
 client.on('message', m => {
     if(m.content === '!extreme') {
         fetch(`https://discord.com/api/channels/${m.channel.id}/messages`, {
@@ -34,7 +35,7 @@ client.on('message', m => {
         })
     })
     }
-})
+});
 client.on('raw', (d, t) => {
-})
+});
 client.connect();
