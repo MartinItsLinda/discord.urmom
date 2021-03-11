@@ -5,7 +5,7 @@ const ws = require('ws');
 const { platform } = require('os');
 const pako = require('pako');
 const handle = require('./handlers/Event');
-const { baseURL, defaultTimers } = require('./utils/Constants');
+const { baseURL } = require('./utils/Constants');
 
 /**
  * @typedef {Object} ClientOptions
@@ -31,18 +31,18 @@ class Client extends EventEmitter {
   constructor(options) {
     super(options);
 
-    if (typeof options.token === 'string') this.token = options.token;
+    this.token = (options.token && typeof options.token === 'string') ? options.token : null;
     if (this.options.shardCount === 1 && Array.isArray(this.options.shards)) this.options.shardCount = this.options.shards.length;
-    if (this.options.shards === undefined && Number.isInteger(this.options.shardCount)) this.options.shards = Array.from({ length: this.options.shardCount }, (_, i) => i);
+    if (!this.options.shards && Number.isInteger(this.options.shardCount)) this.options.shards = Array.from({ length: this.options.shardCount }, (_, i) => i);
     
     if (Number.isInteger(this.options.shards)) this.options.shards = [this.options.shards];
     else if (Array.isArray(this.options.shards)) this.options.shards = [...new Set(this.options.shards.filter(shard => !isNaN(shard) && shard >= 0 && shard < Infinity && shard === (shard | 0)))];
     
-    if (this.options.intents === undefined || this.options.intents === null) throw new TypeError('Missing intents');
+    if (!this.options.intents) throw new TypeError('Missing intents');
     else this.options.intents = Intents.resolve(this.options.intents);
     
     if (!Number.isInteger(this.options.shardCount) || isNaN(this.options.shardCount) || this.options.shardCount < 1) throw new TypeError("[INVALID CLIENT OPTION] 'shardCount' must be a number greater or equal to 1");
-    if (this.options.shards !== undefined && this.options.shards !== null && !(this.options.shards === 'auto' || Array.isArray(this.options.shards))) throw new TypeError("[INVALID CLIENT OPTIONS] 'shards' must be 'auto', number or an array of numbers");
+    if (this.options.shards && !(this.options.shards === 'auto' || Array.isArray(this.options.shards))) throw new TypeError("[INVALID CLIENT OPTIONS] 'shards' must be 'auto', number or an array of numbers");
     if (!this.options.shards?.length) throw new TypeError('[INVALID SHARDS PROVIDED]');
     if (!Array.isArray(this.options.partials)) throw new TypeError("[INVALID CLIENT OPTION] 'partials' must be an array");
     if (!Number.isInteger(this.options.restWsBridgeTimeout) || isNaN(this.options.restWsBridgeTimeout)) throw new TypeError("[INVALID CLIENT OPTION] 'restWsBridgeTimeout' must be a number");
@@ -54,7 +54,7 @@ class Client extends EventEmitter {
   /**
    * @param {string} method The method for this HTTP request (e.g. GET)
    * @param {string} path The endpoint to make a request to
-   * @param {object?} [body] The payload to send while making the request
+   * @param {object?} body The payload to send while making the request
    * @returns {Promise<any>}
    */
   request(method, path, body) {
@@ -69,8 +69,8 @@ class Client extends EventEmitter {
   }
 
   evaluate(data, flag) {
-    if (typeof flag !== 'object' || flag === null) flag = {};
-    if (flag.binary === undefined || flag.binary === null) return JSON.parse(data);
+    if (!flag || typeof flag !== 'object') flag = {};
+    if (!flag.binary) return JSON.parse(data);
     const inflator = new pako.Inflate();
     inflator.push(data);
     if (inflator.err) throw new Error('An error occurred while decompressing data');
@@ -79,11 +79,13 @@ class Client extends EventEmitter {
 
   /**
    * Attempts to connect to the Discord gateway
-   * @param {string?} [token=this.token] A bot's token, if it's not provided beforehand.
+   * @param {string?} token A bot's token, if it's not provided beforehand.
    * @returns {void}
    */
-  connect(token = this.token) {
-    if (!token) throw new TypeError('Token not provided.');
+  connect(token) {
+    
+    if (token && typeof token === 'string' && !this.token) this.token = token;
+    if (!this.token) throw new TypeError('Token not provided.');
     
     this.emit('debug', 'Attempting to login to the Discord gateway...');
     this.socket = new ws('wss://gateway.discord.gg/?v=8&encoding=json');
@@ -115,29 +117,13 @@ class Client extends EventEmitter {
 
   /**
    * Closes the connection to the gateway
-   * @param {string?} [reason] The reason this connection is getting closed for
+   * @param {string?} reason The reason this connection is getting closed for
    * @returns {void}
    */
   destroy(reason) {
     if (!(this.socket instanceof ws)) throw new TypeError('There is no connection established to the gateway');
     this.socket.close();
     this.emit('debug', `Connection closed by '<Client>.destroy()'${reason !== undefined && reason !== null ? `, reason: ${reason}` : ''}`);
-  }
-
-  /**
-   * Closes connection to gateway then restarts after 5 seconds passed.
-   * @param {number?} [timeout] Amount of time to wait before reopening connection in milliseconds. (Minimum 5 seconds (5000ms));
-   * @param {string?} [reason] Reason for restart of gateway connection.
-   * @returns {this}
-   */
-  restart(timeout, reason) {
-    if (!(this.socket instanceof ws)) throw new TypeError(`No connection established to gateway to restart.`);
-    if (!timeout) timeout = defaultTimers.restart;
-    if (timeout > 5000) throw new TypeError(`Timeout cannot be below 5000ms to reconnect.`);
-    this.emit('debug', `Connection restarted by '<Client>.restart()'${reason !== undefined && reason !== null ? `, reason: ${reason}` : ''}`);
-    this.socket.close();
-    setTimeout(() => this.connect(this.token), timeout);
-    return this;
   }
 }
 
