@@ -1,8 +1,7 @@
-const defaults = require(`./util/Constants.js`)
+const defaults = require(`../utils/Constants`)
 
 class Base {
     constructor(client) {
-        this.defaults = defaultOptions;
     }
 }
 module.exports = Base;
