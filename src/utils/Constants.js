@@ -26,5 +26,18 @@ module.exports = {
             clearAll: true,
             clearByPermissions: false,
         }
-    }
+    },
+    channelTypes: [
+        //Received from API as type: Number. Filter through Array and access second item for name in library
+        ['GUILD_TEXT', 'TEXT_CHANNEL', 'TextChannel'],
+        ['DM', 'DIRECT_MESSAGE', 'TextChannel'],
+        ['GUILD_VOICE', 'VOICE_CHANNEL', 'VoiceChannel'],
+        ['GROUP_DM', 'UNAVAILABLE', null], //Cannot create a GROUP DM as a bot.
+        ['GUILD_CATEGORY', 'CATEGORY', 'CategoryChannel'],
+        ['GUILD_NEWS', 'NEWS', 'TextChannel'],
+        ['GUILD_STORE', 'STORE', 'TextChannel']
+    ],
+    PermissionOverwriteTypes: [
+        ['role', 'member']
+    ]
 }

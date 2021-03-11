@@ -5,7 +5,7 @@ class Role extends Base {
         super();
         
         this.client = client;
-        this.id = Number(data.id);
+        this.id = data.id
         this.name = data.name;
         this.permissions = data.permissions;
         this.position = data.position;

@@ -15,5 +15,8 @@ class APIrequest {
         })
         return fetched.json();
     }
+    async sendmessage(client, channel, content, embed) {
+
+    }
 }
 module.exports = APIrequest;
