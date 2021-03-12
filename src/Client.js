@@ -1,4 +1,3 @@
-const fetch = require('node-fetch');
 const EventEmitter = require('events');
 const Intents = require('./constructors/Intents');
 const ws = require('ws');
@@ -51,23 +50,6 @@ class Client extends EventEmitter {
     if (!Number.isInteger(this.options.retryLimit) || isNaN(this.options.retryLimit)) throw new TypeError("[INVALID CLIENT OPTION] 'retryLimit' must be a number");
   }
 
-  /**
-   * @param {string} method The method for this HTTP request (e.g. GET)
-   * @param {string} path The endpoint to make a request to
-   * @param {object?} body The payload to send while making the request
-   * @returns {Promise<any>}
-   */
-  request(method, path, body) {
-    return fetch(`${baseURL}${path}`, {
-      method,
-      headers: {
-        Authorization: `Bot ${this.token}`,
-        'Content-Type': 'application/json'
-      },
-      body: body ? JSON.stringify(body) : null
-    }).then(res => res.json());
-  }
-
   evaluate(data, flag) {
     if (!flag || typeof flag !== 'object') flag = {};
     if (!flag.binary) return JSON.parse(data);
@@ -106,7 +88,7 @@ class Client extends EventEmitter {
       this.socket.once('error', err => this.emit('error', err));
       this.socket.on('message', (message, flag) => handle(message, flag, this));
       this.socket.on('close', errCode => {
-        if (client.hb) clearInterval(client.hb);
+        if (this.hb) clearInterval(this.hb);
         if (errCode === 4004) throw new TypeError('Invalid client token');
         this.emit('debug', `Connection closed due to error code ${errCode}, Re-attempting to login...`);
         this.connect();

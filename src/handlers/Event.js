@@ -1,7 +1,7 @@
 const Guild = require('../constructors/Guild');
 const Message = require('../constructors/Message');
 const User = require('../constructors/User');
-const APIrequest = require('../websocket/APIRequest');
+const APIHandler = require('../websocket/APIHandler');
 
 async function handle(message, flag, client) {
   const msg = client.evaluate(message, flag);
@@ -14,18 +14,14 @@ async function handle(message, flag, client) {
       client.user = new User(client, msg.d.user);
       client._sessionId = msg.d.session_id;
       client.guilds = new Map();
+      client.api = new APIHandler(client);
       msg.d.guilds.forEach(g => {
-        const API = new APIrequest();
-        API.getguild(client, g.id).then(gg => {
-          const guild = new Guild(client, gg);
-          client.guilds.set(guild.id, guild)
-        })
+        client.api.getGuild(g.id).then(guild => client.guilds.set(guild.id, new Guild(client, guild)));
       });
       return client.emit('ready', client.user);
     }
     case 'MESSAGE_CREATE': {
-      const MessageObject = new Message(client, msg.d)
-      client.emit('message', MessageObject)
+      client.emit('message', new Message(client, msg.d));
     }
   }
 
