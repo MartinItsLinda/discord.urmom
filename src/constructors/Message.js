@@ -7,7 +7,7 @@ class Message extends Base {
         super();
         this.client = client;
         
-        this.id = Number(data.id);
+        this.id = data.id;
         this.content = data.content;
         this.tts = data.tts;
         this.mentionEveryone = data.mention_everyone;
