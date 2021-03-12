@@ -21,6 +21,10 @@ class Message extends Base {
         this.createdTimestamp = new Date(data.timestamp);
         this.editedTimestamp = data.edited_timestamp ? new Date(data.edited_timestamp) : null;
     }
+    
+    async reply(content, embed) {
+        return await this.client.api.sendMessage(this.channel.id, content, embed);
+    }
 }
 
 module.exports = Message;

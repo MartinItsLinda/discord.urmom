@@ -9,16 +9,20 @@ class Channel extends Base {
         this.type = channelTypes[data.type][1]; //Call 
         this.guild = client.guilds.get(data.guild_id);
         this.position = data?.position;
-        this.nsfw = data.nsfw === undefined ? null : data.nsfw; //Return null instead of undefined
+        this.nsfw = data.nsfw || null;
         this.permissions = data.permission_overwrites.map(raw => { new PermissionOverwrites(raw) });
         this.name = data.name;
-        this.topic = data.topic === undefined ? null : data.topic;
+        this.topic = data.topic || null;
         /**
          * Last Message ID
          * Rate limit per user
          * Parent ID
          * Last pin timestamp
          */
+    }
+    
+    async send(content, embed) {
+        return await this.client.api.sendMessage(this.id, content, embed);
     }
 }
 module.exports = Channel;
