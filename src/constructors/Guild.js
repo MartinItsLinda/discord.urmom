@@ -57,7 +57,7 @@ class Guild extends Base {
         const size = Number(options.size) || null;
         if (!validBannerFormats.includes(format)) throw new TypeError(`Invalid image format: ${format}`);
         if ((size & (size - 1)) || ((size < 16) || (size > 4096))) throw new TypeError(`Size must be a power of two between 16 to 4096.`)
-
+ 
         return `https://cdn.discordapp.com/banner/${this.id}/${this.banner}.${format}${size ? '?size=' + size : ''}`;
     }
 }

@@ -1,5 +1,6 @@
 const { baseURL } = require(`../utils/Constants`)
-const fetch = require(`node-fetch`)
+const fetch = require(`node-fetch`);
+const Message = require("../constructors/Message");
 class APIrequest {
     constructor() {
     }
@@ -15,8 +16,17 @@ class APIrequest {
         })
         return fetched.json();
     }
-    async sendmessage(client, channel, content, embed) {
-
+    async make(client, options) {
+        const made = await fetch(baseURL + options.url, {
+            method: options.method,
+            headers: {
+                'Content-Type' : 'application/json',
+                'Authorization': `Bot ${client.token}`,
+                'User-Agent' : `Discord.urmom`
+            },
+            body: JSON.stringify(options.body)
+        })
+        return new Message(made.json())
     }
 }
 module.exports = APIrequest;

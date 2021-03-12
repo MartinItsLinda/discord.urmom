@@ -21,33 +21,9 @@ client.on('ready', () => {
 });
 client.on('debug', console.log);
 client.on('error', console.log);
-client.on('message', m => {
-    if (m.content === '!extreme') {
-        console.log(m.channel)
-        fetch(`https://discord.com/api/channels/${m.channel.id}/messages`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bot ${client.token}`,
-                'User-Agent': `Discord.urmom`
-            },
-            body: JSON.stringify({
-                content: "Is the best"
-            })
-        }).then(r => console.log(r))
-    }
-    if (m.content === '!debugroles') {
-        fetch(`https://discord.com/api/channels/${m.channel.id}/messages`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bot ${client.token}`,
-                'User-Agent': `Discord.urmom`
-            },
-            body: JSON.stringify({
-                content: `\`\`\`js\n${client.guilds.get('818982749981114420').roles.map(r => r.id).join(' | ')}\`\`\``
-            })
-        })
+client.on('message', msg => {
+    if(msg.content === '!sendmessage') {
+        msg.channel.sendMessage('testing 123')
     }
 });
 client.on('raw', (d, t) => {
