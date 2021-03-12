@@ -12,7 +12,7 @@ const client = new c({
     retryLimit: 0,
     presence: {
         activities: [{
-            name: "poggers bro",
+            name: "Activity",
             type: 0,
         }]
     }
