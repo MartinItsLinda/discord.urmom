@@ -5,7 +5,7 @@ class Emoji extends Base {
         super();
         
         this.client = client;
-        this.id = Number(data.id);
+        this.id = data.id;
         this.requireColons = data.require_colons;
         this.managed = data.managed;
         this.animated = data.animated;
