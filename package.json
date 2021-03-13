@@ -1,0 +1,34 @@
+{
+  "name": "discord-urmom",
+  "version": "0.0.0",
+  "description": "Advanced Discord API Wrapper to give you limitless ends of the Discord API with built in typings to help you.",
+  "main": "index.js",
+  "dependencies": {
+    "node-fetch": "^2.6.1",
+    "pako": "^2.0.3",
+    "path": "^0.12.7",
+    "ws": "^7.4.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "npm i discord.urmom"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/discord-urmom/discord-urmom.git"
+  },
+  "keywords": [
+    "discord",
+    "wrapper",
+    "apiwrapper",
+    "javascript",
+    "discordbots",
+    "topgg"
+  ],
+  "author": "Extreme",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/discord-urmom/discord-urmom/issues"
+  },
+  "homepage": "https://github.com/discord-urmom/discord-urmom#readme"
+}
